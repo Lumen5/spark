@@ -1,0 +1,35 @@
+---
+version: 2
+jobs:
+    build:
+        resource_class: large
+        docker:
+            - image: us.gcr.io/lumen5-170819/circleci:jdk8
+              auth:
+                  username: _json_key
+                  password: $GCLOUD_DEV_KEY
+        steps:
+            - checkout
+            - run:
+                  name: Make Distribution
+                  command: |
+                      ./dev/make-distribution.sh \
+                          --name lumen5-spark \
+                          --pip \
+                          --tgz \
+                          -Phadoop-2.7 \
+                          -Phive \
+                          -Phive-thriftserver \
+                          -Pmesos \
+                          -Pyarn \
+                          -Pkubernetes
+workflows:
+    version: 2
+    build_workflow:
+        jobs:
+            - build:
+                  filters:
+                      tags:
+                          only: /.*/  # all tags
+                      branches:
+                          only: /.*/  # all branches
