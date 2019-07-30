@@ -73,7 +73,7 @@ function build {
   )
   local BASEDOCKERFILE=${BASEDOCKERFILE:-"$IMG_PATH/spark/Dockerfile"}
   local PYDOCKERFILE=${PYDOCKERFILE:-"$IMG_PATH/spark/bindings/python/Dockerfile"}
-  local RDOCKERFILE=${RDOCKERFILE:-"$IMG_PATH/spark/bindings/R/Dockerfile"}
+  local JDOCKERFILE=${JDOCKERFILE:-"$IMG_PATH/spark/bindings/jump/Dockerfile"}
 
   docker build $NOCACHEARG "${BUILD_ARGS[@]}" \
     -t $(image_ref spark) \
@@ -84,14 +84,14 @@ function build {
     -f "$PYDOCKERFILE" .
 
   docker build $NOCACHEARG "${BINDING_BUILD_ARGS[@]}" \
-    -t $(image_ref spark-r) \
-    -f "$RDOCKERFILE" .
+    -t $(image_ref spark-jump) \
+    -f "$JDOCKERFILE" .
 }
 
 function push {
   docker push "$(image_ref spark)"
   docker push "$(image_ref spark-py)"
-  docker push "$(image_ref spark-r)"
+  docker push "$(image_ref spark-jump)"
 }
 
 function usage {

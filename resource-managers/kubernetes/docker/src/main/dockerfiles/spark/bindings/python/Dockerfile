@@ -32,6 +32,16 @@ RUN apk add --no-cache python && \
     # Removed the .cache to save space
     rm -r /root/.cache
 
+RUN pip install requests
+
+RUN apk update && \
+    apk add alpine-sdk python-dev && \
+    pip install google-cloud-vision==0.31.0 && \
+    apk del alpine-sdk python-dev && \
+    rm -f /var/cache/apk/*
+
+RUN apk add --no-cache py-numpy
+
 COPY python/lib ${SPARK_HOME}/python/lib
 ENV PYTHONPATH ${SPARK_HOME}/python/lib/pyspark.zip:${SPARK_HOME}/python/lib/py4j-*.zip
 

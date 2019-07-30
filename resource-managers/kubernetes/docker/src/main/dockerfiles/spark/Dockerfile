@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-FROM openjdk:8-alpine
+FROM openjdk:8u151-jre-alpine
 
 ARG spark_jars=jars
 ARG img_path=kubernetes/dockerfiles
@@ -29,8 +29,8 @@ ARG k8s_tests=kubernetes/tests
 # docker build -t spark:latest -f kubernetes/dockerfiles/spark/Dockerfile .
 
 RUN set -ex && \
-    apk upgrade --no-cache && \
-    apk add --no-cache bash tini libc6-compat linux-pam nss && \
+    # apk upgrade --no-cache && \
+    apk add --no-cache bash tini libc6-compat linux-pam && \
     mkdir -p /opt/spark && \
     mkdir -p /opt/spark/work-dir && \
     touch /opt/spark/RELEASE && \
@@ -52,3 +52,8 @@ ENV SPARK_HOME /opt/spark
 WORKDIR /opt/spark/work-dir
 
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
+
+RUN rm $SPARK_HOME/jars/guava-14.0.1.jar
+ADD http://central.maven.org/maven2/com/google/guava/guava/23.0/guava-23.0.jar $SPARK_HOME/jars
+ADD https://storage.googleapis.com/hadoop-lib/gcs/gcs-connector-latest-hadoop2.jar $SPARK_HOME/jars
+ADD https://jdbc.postgresql.org/download/postgresql-42.1.1.jar $SPARK_HOME/jars
