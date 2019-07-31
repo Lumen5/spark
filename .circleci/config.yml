@@ -59,14 +59,14 @@ workflows:
             - build:
                   filters:
                       tags:
-                          only: /.*/  # all tags
+                          ignore: /.*/  # all tags
                       branches:
-                          only: /.*/  # all branches
+                          only: /^release-2.4.3$/  # release branch
             - deploy:
                   requires:
                       - build
                   filters:
                       tags:
-                          only: /.*/  # all tags
+                          ignore: /.*/  # all tags
                       branches:
-                          only: /.*/  # all branches
+                          only: /^release-2.4.3$/  # release branch
