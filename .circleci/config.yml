@@ -10,6 +10,11 @@ jobs:
                   password: $GCLOUD_DEV_KEY
         steps:
             - checkout
+            - restore_cache:
+                  keys:
+                      - mvn-v1-{{ .Branch }}-{{ checksum "core/pom.xml" }}
+                      - mvn-v1-{{ .Branch }}-
+                      - mvn-v1-
             - run:
                   name: Make Distribution
                   command: |
@@ -23,6 +28,10 @@ jobs:
                           -Pmesos \
                           -Pyarn \
                           -Pkubernetes
+            - restore_cache:
+                  paths:
+                      - /root/.m2
+                  key: mvn-v1-{{ .Branch }}-{{ checksum "core/pom.xml" }}
             - persist_to_workspace:
                   root: .
                   paths:
