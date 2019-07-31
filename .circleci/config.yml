@@ -21,7 +21,6 @@ jobs:
                       ./dev/make-distribution.sh \
                           --name lumen5-spark \
                           --pip \
-                          --tgz \
                           -Phadoop-2.7 \
                           -Phive \
                           -Phive-thriftserver \
