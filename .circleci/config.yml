@@ -27,7 +27,7 @@ jobs:
                           -Pmesos \
                           -Pyarn \
                           -Pkubernetes
-            - restore_cache:
+            - save_cache:
                   paths:
                       - /root/.m2
                   key: mvn-v1-{{ .Branch }}-{{ checksum "core/pom.xml" }}
@@ -38,19 +38,48 @@ jobs:
     deploy:
         docker:
             - image: docker:19.03-git
+              environment:
+                  CLOUDSDK_CORE_DISABLE_PROMPTS: 1
         steps:
             - setup_remote_docker:
                   docker_layer_caching: true
-            - attach_workspace:
-                  at: workspace
             - run: |
                   set -x
-                  apk add bash
+                  apk add bash curl python
+            - attach_workspace:
+                  at: workspace
+            - restore_cache:
+                  keys:
+                      - gcloud-v1-{{ .Branch }}
+                      - gcloud-v1-
+            - run: |
+                  curl -sSL https://sdk.cloud.google.com | bash || true
+            - save_cache:
+                  paths:
+                      - /root/google-cloud-sdk
+                  key: gcloud-v1-{{ .Branch }}
+            - run: |
+                  set -x
+                  export PATH=$PATH:/root/google-cloud-sdk/bin
+                  echo ${GCLOUD_DEV_KEY} > /root/gcloud-dev-key.json
+                  gcloud auth activate-service-account \
+                      lumen5-production@lumen5-170819.iam.gserviceaccount.com \
+                      --key-file=/root/gcloud-dev-key.json
+                  gcloud auth configure-docker -q
+            - run: |
+                  set -x
                   cd workspace/dist
                   ./bin/docker-image-tool.sh \
                       -r us.gcr.io/lumen5-170819 \
                       -t $CIRCLE_SHA1 \
                       build
+            - run: |
+                  set -x
+                  cd workspace/dist
+                  ./bin/docker-image-tool.sh \
+                      -r us.gcr.io/lumen5-170819 \
+                      -t $CIRCLE_SHA1 \
+                      push
 workflows:
     version: 2
     build_workflow:
