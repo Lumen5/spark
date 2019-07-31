@@ -1,5 +1,5 @@
 ---
-version: 2
+version: 2.1
 jobs:
     build:
         resource_class: large
@@ -23,11 +23,30 @@ jobs:
                           -Pmesos \
                           -Pyarn \
                           -Pkubernetes
+            - persist_to_workspace:
+                  root: .
+                  paths:
+                      - dist
+    deploy:
+        docker:
+            - image: docker:19.03-git
+        steps:
+            - attach_workspace:
+                  at: dist
+            - run: ls -al dist
 workflows:
     version: 2
     build_workflow:
         jobs:
             - build:
+                  filters:
+                      tags:
+                          only: /.*/  # all tags
+                      branches:
+                          only: /.*/  # all branches
+            - deploy:
+                  requires:
+                      - build
                   filters:
                       tags:
                           only: /.*/  # all tags
