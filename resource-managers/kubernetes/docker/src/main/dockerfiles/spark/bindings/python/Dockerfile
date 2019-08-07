@@ -48,5 +48,11 @@ ENV PYTHONIOENCODING utf8
 
 RUN pip install https://storage.googleapis.com/lumen5-170819-spark-search-jobs/packages/graphframes-0.7.0.tar.gz
 
+# NOTE: It is hard to install matplotlib on alpine. Using a package from @testing is not idealm
+# but shouldn't be generating plots on the executors anyways.
+RUN echo "@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+    && apk update \
+    && apk add py2-matplotlib@testing
+
 WORKDIR /opt/spark/work-dir
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
