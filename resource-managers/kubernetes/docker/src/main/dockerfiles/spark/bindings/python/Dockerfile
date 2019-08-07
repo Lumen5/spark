@@ -44,6 +44,9 @@ RUN apk add --no-cache py-numpy
 
 COPY python/lib ${SPARK_HOME}/python/lib
 ENV PYTHONPATH ${SPARK_HOME}/python/lib/pyspark.zip:${SPARK_HOME}/python/lib/py4j-*.zip
+ENV PYTHONIOENCODING utf8
+
+RUN pip install https://storage.googleapis.com/lumen5-170819-spark-search-jobs/packages/graphframes-0.7.0.tar.gz
 
 WORKDIR /opt/spark/work-dir
 ENTRYPOINT [ "/opt/entrypoint.sh" ]

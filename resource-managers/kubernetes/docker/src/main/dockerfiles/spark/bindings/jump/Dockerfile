@@ -44,8 +44,11 @@ RUN apt update && \
 
 COPY python/ ${SPARK_HOME}/python
 ENV PYTHONPATH ${SPARK_HOME}/python/lib/pyspark.zip:${SPARK_HOME}/python/lib/py4j-*.zip
+ENV PYTHONIOENCODING utf8
 
 RUN pip install requests google-cloud-vision==0.31.0 numpy
+
+RUN pip install https://storage.googleapis.com/lumen5-170819-spark-search-jobs/packages/graphframes-0.7.0.tar.gz
 
 WORKDIR /opt/spark
 
