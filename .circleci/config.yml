@@ -87,7 +87,7 @@ workflows:
                       tags:
                           ignore: /.*/  # all tags
                       branches:
-                          only: /^release-2.4.3$/  # release branch
+                          only: /^(release|python)-2.4.3$/  # release branch
             - deploy:
                   requires:
                       - build
@@ -95,4 +95,4 @@ workflows:
                       tags:
                           ignore: /.*/  # all tags
                       branches:
-                          only: /^release-2.4.3$/  # release branch
+                          only: /^(release|python)-2.4.3$/  # release branch

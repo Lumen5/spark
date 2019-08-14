@@ -19,45 +19,32 @@ ARG base_img
 FROM $base_img
 WORKDIR /
 RUN mkdir ${SPARK_HOME}/python
-# TODO: Investigate running both pip and pip3 via virtualenvs
-RUN apk add --no-cache python && \
-    apk add --no-cache python3 && \
-    python -m ensurepip && \
-    python3 -m ensurepip && \
-    # We remove ensurepip since it adds no functionality since pip is
-    # installed on the image and it just takes up 1.6MB on the image
-    rm -r /usr/lib/python*/ensurepip && \
+
+RUN apt-get update && \
+    apt-get install -y python python-pip && \
     pip install --upgrade pip setuptools && \
-    # You may install with python3 packages by using pip3.6
-    # Removed the .cache to save space
-    rm -r /root/.cache
+    rm -rf /var/lib/apt/lists/*
 
-RUN pip install requests
+ENV PATH ${PATH}:/usr/local/bin
 
-RUN apk update && \
-    apk add alpine-sdk python-dev && \
-    pip install google-cloud-vision==0.31.0 && \
-    apk del alpine-sdk python-dev && \
-    rm -f /var/cache/apk/*
-
-RUN apk add --no-cache py-numpy
+RUN apt-get update && \
+    apt-get install build-essential python-dev wget && \
+    wget https://bootstrap.pypa.io/get-pip.py && \
+    python ./get-pip.py && \
+    rm get-pip.py && \
+    pip install \
+        requests \
+        google-cloud-vision==0.31.0 \
+        numpy \
+        matplotlib && \
+    apt-get remove --purge build-essential python-dev wget && \        
+    rm -rf /var/lib/apt/lists/*
 
 COPY python/lib ${SPARK_HOME}/python/lib
 ENV PYTHONPATH ${SPARK_HOME}/python/lib/pyspark.zip:${SPARK_HOME}/python/lib/py4j-*.zip
 ENV PYTHONIOENCODING utf8
 
 RUN pip install https://storage.googleapis.com/lumen5-170819-spark-search-jobs/packages/graphframes-0.7.0.tar.gz
-
-# NOTE: It is hard to install matplotlib on alpine. Using a package from @testing is not idealm
-# but shouldn't be generating plots on the executors anyways.
-RUN echo "@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
-    && apk update \
-    && apk add py2-matplotlib@testing
-
-RUN apk add alpine-sdk python-dev && \
-    pip install backports.functools_lru_cache subprocess32 && \
-    apk del alpine-sdk python-dev && \
-    rm -f /var/cache/apk/*
 
 WORKDIR /opt/spark/work-dir
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
