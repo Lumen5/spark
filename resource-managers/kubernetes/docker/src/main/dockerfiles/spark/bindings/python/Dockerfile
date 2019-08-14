@@ -35,6 +35,7 @@ RUN apt-get update && \
     pip install \
         requests \
         google-cloud-vision==0.31.0 \
+        google-cloud-storage \
         numpy \
         matplotlib && \
     apt-get remove -y --purge build-essential python-dev wget && \
