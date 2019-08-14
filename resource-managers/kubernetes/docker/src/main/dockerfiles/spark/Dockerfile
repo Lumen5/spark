@@ -17,6 +17,8 @@
 
 FROM krallin/ubuntu-tini:xenial
 
+RUN apt update && apt install -y openjdk-8-jdk
+
 ARG spark_jars=jars
 ARG img_path=kubernetes/dockerfiles
 ARG k8s_tests=kubernetes/tests
