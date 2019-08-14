@@ -59,3 +59,4 @@ ADD https://storage.googleapis.com/hadoop-lib/gcs/gcs-connector-latest-hadoop2.j
 ADD https://jdbc.postgresql.org/download/postgresql-42.1.1.jar $SPARK_HOME/jars
 
 RUN ln -s /usr/bin/tini /sbin/tini
+RUN ln -s $(which java) /bin/java
