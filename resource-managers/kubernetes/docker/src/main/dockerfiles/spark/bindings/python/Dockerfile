@@ -28,7 +28,7 @@ RUN apt-get update && \
 ENV PATH ${PATH}:/usr/local/bin
 
 RUN apt-get update && \
-    apt-get install build-essential python-dev wget && \
+    apt-get install -y build-essential python-dev wget && \
     wget https://bootstrap.pypa.io/get-pip.py && \
     python ./get-pip.py && \
     rm get-pip.py && \
@@ -37,7 +37,7 @@ RUN apt-get update && \
         google-cloud-vision==0.31.0 \
         numpy \
         matplotlib && \
-    apt-get remove --purge build-essential python-dev wget && \        
+    apt-get remove -y --purge build-essential python-dev wget && \
     rm -rf /var/lib/apt/lists/*
 
 COPY python/lib ${SPARK_HOME}/python/lib
