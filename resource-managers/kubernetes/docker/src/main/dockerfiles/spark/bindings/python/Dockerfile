@@ -54,5 +54,10 @@ RUN echo "@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/ap
     && apk update \
     && apk add py2-matplotlib@testing
 
+RUN apk add alpine-sdk python-dev && \
+    pip install backports.functools_lru_cache subprocess32 && \
+    apk del alpine-sdk python-dev && \
+    rm -f /var/cache/apk/*
+
 WORKDIR /opt/spark/work-dir
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
