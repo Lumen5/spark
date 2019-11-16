@@ -58,5 +58,8 @@ ADD http://central.maven.org/maven2/com/google/guava/guava/23.0/guava-23.0.jar $
 ADD https://storage.googleapis.com/hadoop-lib/gcs/gcs-connector-latest-hadoop2.jar $SPARK_HOME/jars
 ADD https://jdbc.postgresql.org/download/postgresql-42.1.1.jar $SPARK_HOME/jars
 
+RUN rm $SPARK_HOME/jars/kubernetes-client-4.1.2.jar
+ADD https://repo1.maven.org/maven2/io/fabric8/kubernetes-client/4.4.2/kubernetes-client-4.4.2.jar $SPARK_HOME/jars
+
 RUN ln -s /usr/bin/tini /sbin/tini
 RUN ln -s $(which java) /bin/java
